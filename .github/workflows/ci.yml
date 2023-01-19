@@ -18,6 +18,7 @@ jobs:
 #      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install rpm
       - run: yarn --frozen-lockfile
       - run: yarn lint
+      - run: yarn compile
       - run: yarn build:linux
       - uses: actions/upload-artifact@v2
         with:
