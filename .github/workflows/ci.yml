@@ -9,7 +9,7 @@ on:
       - '**'
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v1
         with:
@@ -18,16 +18,8 @@ jobs:
       - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install rpm
       - run: yarn --frozen-lockfile
       - run: yarn lint
-      - run: yarn build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.event.repository.name }}-macos
-          path: dist/*-mac.*
+      - run: yarn build:linux
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ github.event.repository.name }}-linux
           path: dist/*-linux.*
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.event.repository.name }}-windows
-          path: dist/*-win.*
