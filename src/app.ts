@@ -101,7 +101,10 @@ function createWindow(): void {
     webPreferences: {
       nodeIntegration: false,
       nativeWindowOpen: true,
-      preload: path.join(__dirname, 'preload')
+      preload: path.join(__dirname, 'preload'),
+      additionalArguments: [
+        `--settings=${JSON.stringify(config.get(ConfigKey.DarkModeSettings))}`
+      ]
     },
     show: !shouldStartMinimized,
     icon: is.linux
@@ -342,6 +345,11 @@ app.on('before-quit', () => {
       'dark-mode:updated',
       nativeTheme.shouldUseDarkColors
     )
+  })
+
+  config.onDidChange(ConfigKey.DarkModeSettings, (newValue) => {
+    if (newValue)
+      sendChannelToAllWindows('dark-mode:settings:updated', newValue)
   })
 
   createWindow()

@@ -3,13 +3,19 @@ import log from 'electron-log'
 
 import { ConfigKey } from './config'
 import initDarkMode from './dark-mode'
-
 import elementReady = require('element-ready')
 
 const INTERVAL = 1000
 let count: number
 
-initDarkMode()
+initDarkMode(getThemeSettings(global.process.argv))
+
+function getThemeSettings(args: string[]) {
+  const settingsObject = args
+    .find((s) => s.includes('settings'))
+    ?.replace('--settings=', '')
+  return JSON.parse(settingsObject ?? '{}')
+}
 
 function getUnreadCount(): number {
   // Find the number next to the inbox label
@@ -93,7 +99,6 @@ window.addEventListener('load', () => {
   //   that should close the new window
   attachButtonListeners()
 })
-
 // Toggle a custom style class when a message is received from the main process
 ipc.on('set-custom-style', (_: Event, key: ConfigKey, enabled: boolean) => {
   document.body.classList[enabled ? 'add' : 'remove'](key)

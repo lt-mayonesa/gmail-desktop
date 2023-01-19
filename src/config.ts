@@ -14,6 +14,13 @@ interface LastWindowState {
   maximized: boolean
 }
 
+interface DarkModeSettings {
+  selectionColor: string
+  brightness: number
+  contrast: number
+  sepia: number
+}
+
 export enum ConfigKey {
   AutoUpdate = 'autoUpdate',
   CompactHeader = 'compactHeader',
@@ -34,6 +41,7 @@ export enum ConfigKey {
   DownloadsOpenFolderWhenDone = 'downloadsOpenFolderWhenDone',
   DownloadsLocation = 'downloadsLocation',
   DarkMode = 'darkMode',
+  DarkModeSettings = 'darkModeSettings',
   ResetConfig = 'resetConfig',
   ReleaseChannel = 'releaseChannel'
 }
@@ -58,6 +66,7 @@ type TypedStore = {
   [ConfigKey.DownloadsOpenFolderWhenDone]: boolean
   [ConfigKey.DownloadsLocation]: string
   [ConfigKey.DarkMode]?: 'system' | boolean
+  [ConfigKey.DarkModeSettings]: DarkModeSettings
   [ConfigKey.ResetConfig]: boolean
   [ConfigKey.ReleaseChannel]: 'stable' | 'dev'
 }
@@ -91,12 +100,19 @@ const defaults: TypedStore = {
   [ConfigKey.DownloadsOpenFolderWhenDone]: false,
   [ConfigKey.DownloadsLocation]: app.getPath('downloads'),
   [ConfigKey.ResetConfig]: false,
-  [ConfigKey.ReleaseChannel]: 'stable'
+  [ConfigKey.ReleaseChannel]: 'stable',
+  [ConfigKey.DarkModeSettings]: {
+    selectionColor: '#c2dbff',
+    brightness: 100,
+    contrast: 100,
+    sepia: 0
+  }
 }
 
 const config = new Store<TypedStore>({
   defaults,
   name: is.development ? 'config.dev' : 'config',
+  watch: true,
   migrations: {
     '>=2.21.2': (store) => {
       const hideRightSidebar: boolean | undefined = store.get(

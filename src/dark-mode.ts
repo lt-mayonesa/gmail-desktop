@@ -4,14 +4,17 @@ import * as DarkReader from 'darkreader'
 DarkReader.setFetchMethod(window.fetch)
 
 const darkSchemeBackgroundColor = '#121212'
-const selectionColor = '#c2dbff'
 
-function enableDarkMode(): void {
+interface DarkModeSettings {
+  selectionColor: string
+  brightness: number
+  contrast: number
+  sepia: number
+}
+
+function enableDarkMode(settings: DarkModeSettings): void {
   DarkReader.enable(
-    {
-      darkSchemeBackgroundColor,
-      selectionColor
-    },
+    { ...settings, darkSchemeBackgroundColor },
     {
       css: `
           /* Read email */
@@ -59,21 +62,28 @@ function enableDarkMode(): void {
   )
 }
 
-async function initDarkMode(): Promise<void> {
+async function initDarkMode(settings: DarkModeSettings): Promise<void> {
   const darkMode = await ipc.invoke('dark-mode')
 
   if (darkMode) {
     window.addEventListener('DOMContentLoaded', () => {
-      enableDarkMode()
+      enableDarkMode(settings)
     })
   }
 
   ipc.on('dark-mode:updated', (_event, enabled: boolean) => {
     if (enabled) {
-      enableDarkMode()
+      enableDarkMode(settings)
     } else {
       DarkReader.disable()
     }
+  })
+
+  ipc.on('dark-mode:settings:updated', (_event, updatedSettings) => {
+    enableDarkMode({
+      ...settings,
+      ...updatedSettings
+    })
   })
 }
 
