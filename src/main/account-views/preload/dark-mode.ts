@@ -4,11 +4,18 @@ import { darkTheme } from '../../../theme'
 
 DarkReader.setFetchMethod(window.fetch)
 
-function enableDarkMode(): void {
+interface DarkModeSettings {
+  brightness: number
+  contrast: number
+  sepia: number
+}
+
+function enableDarkMode(settings: DarkModeSettings): void {
   DarkReader.enable(
     {
       darkSchemeBackgroundColor: darkTheme.bg[0],
-      selectionColor: darkTheme.selection
+      selectionColor: darkTheme.selection,
+      ...settings
     },
     {
       css: `
@@ -111,21 +118,28 @@ async function initDarkMode(): Promise<void> {
   if (darkMode.enabled) {
     if (darkMode.initLazy) {
       ipcRenderer.once('account-selected', () => {
-        enableDarkMode()
+        enableDarkMode(darkMode.settings)
       })
     } else {
       window.addEventListener('DOMContentLoaded', () => {
-        enableDarkMode()
+        enableDarkMode(darkMode.settings)
       })
     }
   }
 
   ipcRenderer.on('dark-mode-updated', (_event, enabled: boolean) => {
     if (enabled) {
-      enableDarkMode()
+      enableDarkMode(darkMode.settings)
     } else {
       DarkReader.disable()
     }
+  })
+
+  ipcRenderer.on('dark-mode:settings:updated', (_event, updatedSettings) => {
+    enableDarkMode({
+      ...darkMode.settings,
+      ...updatedSettings
+    })
   })
 }
 

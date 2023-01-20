@@ -17,7 +17,6 @@ interface LastWindowState {
 }
 
 interface DarkModeSettings {
-  selectionColor: string
   brightness: number
   contrast: number
   sepia: number
@@ -151,7 +150,6 @@ const defaults: TypedStore = {
   [ConfigKey.BlockerBlockEmailTrackers]: true,
   [ConfigKey.ReleaseChannel]: 'stable',
   [ConfigKey.DarkModeSettings]: {
-    selectionColor: '#c2dbff',
     brightness: 100,
     contrast: 100,
     sepia: 0

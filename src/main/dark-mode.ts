@@ -19,12 +19,20 @@ export async function initDarkMode() {
     const selectedAccountView = getSelectedAccountView()
     return {
       enabled: nativeTheme.shouldUseDarkColors,
-      initLazy: event.sender.id !== selectedAccountView?.webContents.id
+      initLazy: event.sender.id !== selectedAccountView?.webContents.id,
+      settings: config.get(ConfigKey.DarkModeSettings)
     }
   })
 
   nativeTheme.on('updated', () => {
     sendToMainWindow('dark-mode-updated', nativeTheme.shouldUseDarkColors)
     sendToAccountViews('dark-mode-updated', nativeTheme.shouldUseDarkColors)
+  })
+
+  config.onDidChange(ConfigKey.DarkModeSettings, (newValue) => {
+    if (newValue) {
+      sendToMainWindow('dark-mode:settings:updated', newValue)
+      sendToAccountViews('dark-mode:settings:updated', newValue)
+    }
   })
 }
