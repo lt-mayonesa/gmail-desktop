@@ -16,6 +16,13 @@ interface LastWindowState {
   maximized: boolean
 }
 
+interface DarkModeSettings {
+  selectionColor: string
+  brightness: number
+  contrast: number
+  sepia: number
+}
+
 export enum ConfigKey {
   AutoUpdateCheck = 'autoUpdateCheck',
   NotifyUpdateDownloaded = 'notifyUpdateDownloaded',
@@ -37,6 +44,7 @@ export enum ConfigKey {
   DownloadsOpenFolderWhenDone = 'downloadsOpenFolderWhenDone',
   DownloadsLocation = 'downloadsLocation',
   DarkMode = 'darkMode',
+  DarkModeSettings = 'darkModeSettings',
   ResetConfig = 'resetConfig',
   ReleaseChannel = 'releaseChannel',
   Accounts = 'accounts',
@@ -74,6 +82,7 @@ type TypedStore = {
   [ConfigKey.DownloadsOpenFolderWhenDone]: boolean
   [ConfigKey.DownloadsLocation]: string
   [ConfigKey.DarkMode]: 'system' | boolean
+  [ConfigKey.DarkModeSettings]: DarkModeSettings
   [ConfigKey.ResetConfig]: boolean
   [ConfigKey.ReleaseChannel]: 'stable' | 'dev'
   [ConfigKey.Accounts]: Account[]
@@ -139,13 +148,21 @@ const defaults: TypedStore = {
   [ConfigKey.BlockerEnabled]: true,
   [ConfigKey.BlockerBlockAds]: true,
   [ConfigKey.BlockerBlockAnalytics]: true,
-  [ConfigKey.BlockerBlockEmailTrackers]: true
+  [ConfigKey.BlockerBlockEmailTrackers]: true,
+  [ConfigKey.ReleaseChannel]: 'stable',
+  [ConfigKey.DarkModeSettings]: {
+    selectionColor: '#c2dbff',
+    brightness: 100,
+    contrast: 100,
+    sepia: 0
+  }
 }
 
 const config = new Store<TypedStore>({
   defaults,
   name: is.development ? 'config.dev' : 'config',
   accessPropertiesByDotNotation: false,
+  watch: true,
   migrations: {
     '>=2.21.2': (store) => {
       const hideRightSidebar: boolean | undefined = store.get(
