@@ -13,4 +13,5 @@ yarn-error.log
 # Build and distribution files
 build-js/
 dist/
+dist-js/
 *.tgz
