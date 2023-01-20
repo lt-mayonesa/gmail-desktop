@@ -45,7 +45,7 @@ const htmlReactParserOptions: HTMLReactParserOptions = {
           return <ListItem>{parseDom(children)}</ListItem>
         case 'a':
           return (
-            <Link {...attributesToProps(attribs)} color="blue.400">
+            <Link {...attributesToProps(attribs).style} color="blue.400">
               {parseDom(children)}
             </Link>
           )
@@ -56,7 +56,7 @@ const htmlReactParserOptions: HTMLReactParserOptions = {
             </Code>
           )
         case 'img':
-          return <Image {...attributesToProps(attribs)} />
+          return <Image {...attributesToProps(attribs).style} />
         case 'kbd':
           return <Kbd>{parseDom(children)}</Kbd>
         case 'code':

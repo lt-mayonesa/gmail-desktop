@@ -164,7 +164,7 @@ function getUnreadInbox() {
 
 function parseNewMails(feedDocument: Document) {
   const newMails: Mail[] = []
-  const mails = feedDocument.querySelectorAll('entry')
+  const mails = Array.from(feedDocument.querySelectorAll('entry'))
   const currentDate = Date.now()
 
   for (const mail of mails) {
